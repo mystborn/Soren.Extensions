@@ -57,15 +57,180 @@ namespace Soren.Extensions.Logging
             LogFatal?.Invoke(message, ctx);
         }
 
-        public static LogAdapter ConsoleAdapter()
+        public static void AddConsoleTarget(LogAdapter logger, bool includeLogLevel = true)
+        {
+            logger.LogTrace += (value, ctx) =>
+            {
+                if (includeLogLevel)
+                    Console.Write("[Trace] ");
+                Console.WriteLine(value);
+            };
+
+            logger.LogDebug += (value, ctx) =>
+            {
+                if (includeLogLevel)
+                    Console.Write("[Debug] ");
+                Console.WriteLine(value);
+            };
+
+            logger.LogInfo += (value, ctx) =>
+            {
+                if (includeLogLevel)
+                    Console.Write("[Info] ");
+                Console.WriteLine(value);
+            };
+
+            logger.LogWarning += (value, ctx) =>
+            {
+                if (includeLogLevel)
+                    Console.Write("[Warning] ");
+                Console.WriteLine(value);
+            };
+
+            logger.LogError += (value, ctx) =>
+            {
+                if (includeLogLevel)
+                    Console.Write("[Error] ");
+                Console.WriteLine(value);
+            };
+
+            logger.LogFatal += (value, ctx) =>
+            {
+                if (includeLogLevel)
+                    Console.Write("[Fatal] ");
+                Console.WriteLine(value);
+            };
+        }
+
+        public static void AddColorConsoleTarget(LogAdapter logger, bool includeLogLevel = true, bool wholeLineColored = false)
+        {
+            void WriteValue(string value)
+            {
+                if(wholeLineColored)
+                {
+                    Console.WriteLine(value);
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.ResetColor();
+                    Console.WriteLine(value);
+                }
+            }
+
+            logger.LogTrace += (value, ctx) =>
+            {
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                if(includeLogLevel)
+                    Console.Write("[Trace] ");
+                WriteValue(value);
+            };
+
+            logger.LogDebug += (value, ctx) =>
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                if (includeLogLevel)
+                    Console.Write("[Debug] ");
+                WriteValue(value);
+            };
+
+            logger.LogInfo += (value, ctx) =>
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                if (includeLogLevel)
+                    Console.Write("[Info] ");
+                WriteValue(value);
+            };
+
+            logger.LogWarning += (value, ctx) =>
+            {
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                if (includeLogLevel)
+                    Console.Write("[Warning] ");
+                WriteValue(value);
+            };
+
+            logger.LogError += (value, ctx) =>
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                if (includeLogLevel)
+                    Console.Write("[Error] ");
+                WriteValue(value);
+            };
+
+            logger.LogFatal += (value, ctx) =>
+            {
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.DarkRed;
+                if (includeLogLevel)
+                    Console.Write("[Fatal] ");
+                WriteValue(value);
+            };
+        }
+
+        public static void AddDebugTarget(LogAdapter logger, bool includeLogLevel = true)
+        {
+            logger.LogTrace += (value, ctx) =>
+            {
+                if (includeLogLevel)
+                    System.Diagnostics.Debug.Write("[Trace] ");
+                System.Diagnostics.Debug.WriteLine(value);
+            };
+
+            logger.LogDebug += (value, ctx) =>
+            {
+                if (includeLogLevel)
+                    System.Diagnostics.Debug.Write("[Debug] ");
+                System.Diagnostics.Debug.WriteLine(value);
+            };
+
+            logger.LogInfo += (value, ctx) =>
+            {
+                if (includeLogLevel)
+                    System.Diagnostics.Debug.Write("[Info] ");
+                System.Diagnostics.Debug.WriteLine(value);
+            };
+
+            logger.LogWarning += (value, ctx) =>
+            {
+                if (includeLogLevel)
+                    System.Diagnostics.Debug.Write("[Warning] ");
+                System.Diagnostics.Debug.WriteLine(value);
+            };
+
+            logger.LogError += (value, ctx) =>
+            {
+                if (includeLogLevel)
+                    System.Diagnostics.Debug.Write("[Error] ");
+                System.Diagnostics.Debug.WriteLine(value);
+            };
+
+            logger.LogFatal += (value, ctx) =>
+            {
+                if (includeLogLevel)
+                    System.Diagnostics.Debug.Write("[Fatal] ");
+                System.Diagnostics.Debug.WriteLine(value);
+            };
+        }
+
+        public static LogAdapter ConsoleAdapter(bool includeLogLevel = true)
         {
             var logger = new LogAdapter();
-            logger.LogTrace += (value, ctx) => Console.WriteLine($"[Trace] {value}");
-            logger.LogDebug += (value, ctx) => Console.WriteLine($"[Debug] {value}");
-            logger.LogInfo += (value, ctx) => Console.WriteLine($"[Info] {value}");
-            logger.LogWarning += (value, ctx) => Console.WriteLine($"[Warning] {value}");
-            logger.LogError += (value, ctx) => Console.WriteLine($"[Error] {value}");
-            logger.LogTrace += (value, ctx) => Console.WriteLine($"[Trace] {value}");
+            AddConsoleTarget(logger, includeLogLevel);
+            return logger;
+        }
+
+        public static LogAdapter ColorConsoleAdapter(bool includeLogLevel = true, bool wholeLineColored = false)
+        {
+            var logger = new LogAdapter();
+            AddColorConsoleTarget(logger, includeLogLevel, wholeLineColored);
+            return logger;
+        }
+
+        public static LogAdapter DebugAdapter(bool includeLogLevel = true)
+        {
+            var logger = new LogAdapter();
+            AddDebugTarget(logger, includeLogLevel);
             return logger;
         }
     }
